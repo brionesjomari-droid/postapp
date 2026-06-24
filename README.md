@@ -34,3 +34,38 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Database (local XAMPP MySQL on port 3307)
+
+If you're running MySQL via XAMPP on port `3307`, create or update `.env.local` in the project root with your credentials, for example:
+
+DATABASE_URL="mysql://root:password@127.0.0.1:3307/postapp_db"
+
+To test connectivity and scaffold Prisma client locally:
+
+1. Install new dependencies:
+
+```bash
+npm install @prisma/client mysql2 dotenv
+npm install -D prisma
+```
+
+2. Generate Prisma client:
+
+```bash
+npm run prisma:generate
+```
+
+3. (Optional) Create the initial migration and push to the DB:
+
+```bash
+npm run prisma:migrate
+```
+
+4. Quick connection test:
+
+```bash
+npm run db:test
+```
+
+If you want, I can run these steps for you or guide you through them.
