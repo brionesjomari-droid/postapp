@@ -9,7 +9,40 @@ export default function AddPostPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handlePublish(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content, published: true }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to post");
+      }
+
+      setSuccess("Post published!");
+      setTitle("");
+      setContent("");
+      
+      // Redirect to posts page after 1 second
+      setTimeout(() => {
+        window.location.href = "/posts";
+      }, 1000);
+    } catch (err: unknown) {
+      setError((err as Error).message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleSaveDraft(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -24,12 +57,17 @@ export default function AddPostPage() {
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Failed to save post");
+        throw new Error(err.error || "Failed to save draft");
       }
 
-      setSuccess("Post saved as draft!");
+      setSuccess("Draft saved!");
       setTitle("");
       setContent("");
+      
+      // Redirect to drafts page after 1 second
+      setTimeout(() => {
+        window.location.href = "/drafts";
+      }, 1000);
     } catch (err: unknown) {
       setError((err as Error).message || "An error occurred");
     } finally {
@@ -61,7 +99,7 @@ export default function AddPostPage() {
         </p>
       )}
 
-      <form onSubmit={handleSubmit} style={{ marginTop: 16, maxWidth: 700 }}>
+      <form onSubmit={handlePublish} style={{ marginTop: 16, maxWidth: 700 }}>
         <div style={{ marginBottom: 12 }}>
           <label style={{ display: "block", marginBottom: 6 }}>Title</label>
           <input
@@ -83,9 +121,27 @@ export default function AddPostPage() {
           />
         </div>
 
-        <button type="submit" className="button-primary" disabled={loading}>
-          {loading ? "Saving..." : "Add Post"}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button type="submit" className="button-primary" disabled={loading}>
+            {loading ? "Publishing..." : "Add Post"}
+          </button>
+          <button 
+            type="button" 
+            onClick={handleSaveDraft}
+            disabled={loading}
+            style={{
+              padding: "10px 16px",
+              background: "#6366f1",
+              color: "white",
+              border: "none",
+              borderRadius: 4,
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.6 : 1,
+            }}
+          >
+            {loading ? "Saving..." : "Save as Draft"}
+          </button>
+        </div>
       </form>
     </section>
   );

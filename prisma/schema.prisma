@@ -13,4 +13,14 @@ model Post {
   content   String?
   published Boolean  @default(false)
   createdAt DateTime @default(now())
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int     @id @default(autoincrement())
+  content   String
+  postId    Int
+  post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  published Boolean @default(false)
+  createdAt DateTime @default(now())
 }
